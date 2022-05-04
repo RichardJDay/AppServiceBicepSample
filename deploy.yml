@@ -1,0 +1,35 @@
+parameters:
+  - name: infrastructureVersionNumber
+    type: string
+  - name: appServiceName
+    type: string
+  - name: environmentName
+    type: string
+  - name: versionNumber
+    type: string
+
+stages:
+  - stage: ${{parameters.environmentName}}
+    dependsOn: [] 
+    jobs:
+      - deployment:
+        environment: ${{parameters.environmentName}}
+        strategy: 
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self 
+              - task: AzureCLI@2
+                displayName: 'Deploy Azure Resource Group'
+                inputs:
+                  azureSubscription: ${{parameters.environmentName}}
+                  scriptType: 'bash'
+                  scriptLocation: 'inlineScript'
+                  inlineScript: |
+                    az deployment sub create --location uksouth --template-file ppln/main.bicep --parameters "{ 
+                      \"infrastructureVersionNumber\": { \"value\": \"${{parameters.infrastructureVersionNumber}}\" },
+                      \"appServiceName\": { \"value\": \"${{parameters.appServiceName}}\" }, 
+                      \"environmentName\": { \"value\": \"${{parameters.environmentName}}\" }, 
+                      \"versionNumber\": { \"value\": \"${{parameters.versionNumber}}\" },
+
+                    }"

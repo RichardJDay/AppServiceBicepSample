@@ -1,0 +1,27 @@
+name: '6.0.$(date:yy)$(DayOfYear).$(rev:r)'
+
+trigger:
+  - main
+  
+pool:
+  vmImage: windows-2022
+
+stages:
+  - template: deploy.yml
+    parameters: 
+      infrastructureVersionNumber: 2111
+      appServiceName: Simply-Api-Eqpmnt
+      environmentName: Dev
+      versionNumber: 2111
+  - template: deploy.yml
+    parameters: 
+      infrastructureVersionNumber: 2111
+      appServiceName: Simply-Api-Eqpmnt
+      environmentName: UAT
+      versionNumber: 2111
+  - template: deploy.yml
+    parameters: 
+      infrastructureVersionNumber: 2111
+      appServiceName: Simply-Api-Eqpmnt
+      environmentName: Prd
+      versionNumber: 2111
